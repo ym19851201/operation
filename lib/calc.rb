@@ -4,7 +4,7 @@ def reduce(a)
       sum = [item.to_i]
     elsif item =~ /\d+/
       ope = sum.pop
-      sum = [operate(sum[0], item.to_i, ope)]
+      sum = [operate(sum[0], item, ope)]
     else
       next_ope = item
       sum << next_ope
@@ -14,7 +14,7 @@ def reduce(a)
 end
 
 def operate(a, b, operator)
-  a.send(operator, b)
+  a.to_i.send(operator, b.to_i)
 end
 
 def shrink_brackets(a)
@@ -30,8 +30,7 @@ def shrink(a)
   md = proc {|e| e == '*' or e == '/'}
   index = a.index &md
   return a unless index
-#   result = reduce(a[(index-1)..(index+1)])
-  result = reduce(a[(index-1)..(index+1)])
+  result = operate(a[index-1], a[index+1], a[index])
   shrink(front(a, index) + [result.to_s] + back(a, index))
 end
 
