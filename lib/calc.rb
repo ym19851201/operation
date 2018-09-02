@@ -1,8 +1,9 @@
 def reduce(a)
   result = a.inject([]) do |sum, item|
     if sum.empty?
-      sum = [item.to_i]
-    elsif item =~ /\d+/
+      sum = [item]
+#     elsif item =~ /\d+/
+    elsif item != '+' and item != '-' and item != '*' and item != '/' 
       ope = sum.pop
       sum = [operate(sum[0], item, ope)]
     else
@@ -14,7 +15,7 @@ def reduce(a)
 end
 
 def operate(a, b, operator)
-  a.to_i.send(operator, b.to_i)
+  a.send(operator, b)
 end
 
 def shrink_brackets(a)
@@ -22,16 +23,17 @@ def shrink_brackets(a)
   return a unless s_i
 
   e_i = s_i + a[(s_i+1)..-1].index(')') + 1
-  result = calculate(a[(s_i+1)...e_i])
-  shrink_brackets(front_bracket(a, s_i) + [result.to_s] + back_bracket(a, e_i))
+  result = shrink_and_calculate(a[(s_i+1)...e_i])
+  shrink_brackets(front_bracket(a, s_i) + [result] + back_bracket(a, e_i))
 end
 
 def shrink(a)
   md = proc {|e| e == '*' or e == '/'}
   index = a.index &md
   return a unless index
+
   result = operate(a[index-1], a[index+1], a[index])
-  shrink(front(a, index) + [result.to_s] + back(a, index))
+  shrink(front(a, index) + [result] + back(a, index))
 end
 
 def front_bracket(a, bracket_index)
@@ -59,6 +61,20 @@ def back(a, index)
 end
 
 def calculate(a)
+  elements = split_elements(a)
+  shrink_and_calculate(elements)
+end
+
+def shrink_and_calculate(a)
   reduce(shrink(shrink_brackets(a)))
 end
 
+def split_elements(str)
+  str.split(/(\(|\))/).map {|e| e.split(' ')}.flatten.map do |e| 
+    if e == '*' or e == '/' or e == '+' or e == '-' or e == '(' or e == ')' 
+      e
+    else
+      e.to_i
+    end
+  end
+end

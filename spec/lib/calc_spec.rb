@@ -3,77 +3,90 @@ require 'calc'
 
 describe 'shrink' do
   it 'shrinks array' do
-    array = '1 + 3 - 2 * 3 / 1 + 5'.split(' ')
-#     expect(split(array)).to eq ['1', '+', '3', '-', ['2', '*', '3', '/', '1'], '+', '5']
-    expect(shrink(array)).to eq ['1', '+', '3', '-', '6', '+', '5']
+    str = '1 + 3 - 2 * 3 / 1 + 5'
+    array = split_elements(str)
+    expect(shrink(array)).to eq [1, '+', 3, '-', 6, '+', 5]
   end
 
   it 'shrinks array' do
-    array = '1 + 3 - 2 * 3 / 1 + 5 * 8 + 6'.split(' ')
-    expect(shrink(array)).to eq ['1', '+', '3', '-', '6', '+', '40', '+', '6']
+    str = '1 + 3 - 2 * 3 / 1 + 5 * 8 + 6'
+    array = split_elements(str)
+    expect(shrink(array)).to eq [1, '+', 3, '-', 6, '+', 40, '+', 6]
   end
 
   it 'shrinks array' do
-    array = '1 + 3 - 2 + 6'.split(' ')
-    expect(shrink(array)).to eq array
+    str = '1 + 3 - 2 + 6'
+    array = split_elements(str)
+    expect(shrink(array)).to eq [1, '+', 3, '-', 2, '+', 6]
   end
 
   it 'shrinks array' do
-    array = '2 * 3'.split(' ')
-    expect(shrink(array)).to eq ['6']
+    str = '2 * 3'
+    array = split_elements(str)
+    expect(shrink(array)).to eq [6]
   end
 end
 
 describe 'calculate' do
   it 'solves 2 * 3' do
-    array = '2 * 3'.split(' ')
-    expect(calculate(array)).to eq 6
+    str = '2 * 3'
+    expect(calculate(str)).to eq 6
   end
 
   it 'solves 2 * 3 + 2' do
-    array = '2 * 3 + 2'.split(' ')
-    expect(calculate(array)).to eq 8
+    str = '2 * 3 + 2'
+    expect(calculate(str)).to eq 8
   end
 
   it 'solves 2 * 3 - 2' do
-    array = '2 * 3 - 2'.split(' ')
-    expect(calculate(array)).to eq 4
+    str = '2 * 3 - 2'
+    expect(calculate(str)).to eq 4
   end
 
   it 'solves calculation' do
-    array = '1 + 3 * 2'.split(' ')
-    expect(calculate(array)).to eq 7
+    str = '1 + 3 * 2'
+    expect(calculate(str)).to eq 7
   end
 
   it 'solves calculation' do
     str =  '1 + 3 * 2 / 6 - 3 * 8 / 4 - 9'
-    array = str.split(' ')
-    expect(calculate(array)).to eq eval(str)
+    expect(calculate(str)).to eq eval(str)
   end
-end
 
-describe 'shrink_brackets' do
   it 'solves' do
     str =  '( 1 + 3 ) * 2 / ( 6 - 3 ) * 8 / 4 - 9'
-    array = str.split(' ')
-    expect(calculate(array)).to eq eval(str)
+    expect(calculate(str)).to eq eval(str)
   end
 
   it 'solves' do
     str =  '( 1 + 3 * 2 ) * 2 / ( 6 / 3 - 3 ) * 8 / 4 - 9'
-    array = str.split(' ')
-    expect(calculate(array)).to eq eval(str)
+    expect(calculate(str)).to eq eval(str)
   end
 
   it 'solves' do
     str =  '5 - ( 1 + 3 * 2 ) * 2 / ( 6 / 3 - 3 ) * 8 / 4 - 9'
-    array = str.split(' ')
-    expect(calculate(array)).to eq eval(str)
+    expect(calculate(str)).to eq eval(str)
   end
 
   it 'solves' do
     str =  '5 - ( ( 1 + 3 ) * 2 ) * 2 / ( 6 / 3 - 3 ) * 8 / 4 - 9'
-    array = str.split(' ')
-    expect(calculate(array)).to eq eval(str)
+    expect(calculate(str)).to eq eval(str)
+  end
+
+  it 'solves' do
+    str =  '( ( 3 + 2 ) + ( 5 + 4 ) )'
+    expect(calculate(str)).to eq eval(str)
+  end
+end
+
+describe 'split_elements' do
+  it 'splits string into elements' do
+    str =  '5 - ( ( 1 + 3 ) * 2 ) * 2 / ( 6 / 3 - 3 ) * 8 / 4 - 9'
+    expect(split_elements(str)).to eq [5, '-', '(', '(', 1, '+', 3, ')', '*', 2, ')', '*', 2, '/', '(', 6, '/', 3, '-', 3, ')', '*', 8, '/', 4, '-', 9]
+  end
+
+  it 'splits string into elements' do
+    str =  '5 - ((1 + 3) * 2) * 2 / (6 / 3 - 3) * 8 / 4 - 9'
+    expect(split_elements(str)).to eq [5, '-', '(', '(', 1, '+', 3, ')', '*', 2, ')', '*', 2, '/', '(', 6, '/', 3, '-', 3, ')', '*', 8, '/', 4, '-', 9]
   end
 end
